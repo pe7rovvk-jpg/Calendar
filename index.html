@@ -3,392 +3,574 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Общий календарь</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+<title>Совместный Календарь</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  :root{
-    --navy: #16345e;
-    --navy-deep: #0e2340;
-    --gold: #c9a15d;
-    --gold-soft: #e8d9b8;
-    --paper: #f6f7f9;
-    --card: #ffffff;
-    --line: #dde2ea;
-    --text: #1f2430;
-    --text-soft: #5b6472;
-    --userA: #1b3a6b; /* Настя (синий) */
-    --userB: #a04b32; /* Ира (красный) */
-    --radius: 6px;
+<style>
+  :root {
+    --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+    --card-bg: rgba(255, 255, 255, 0.07);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --glass-hover: rgba(255, 255, 255, 0.12);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-glow: rgba(99, 102, 241, 0.35);
+    
+    --user-a-grad: linear-gradient(135deg, #3b82f6, #1d4ed8); /* Настя */
+    --user-b-grad: linear-gradient(135deg, #ec4899, #be185d); /* Ира */
+    
+    --cat-work: #38bdf8;
+    --cat-meet: #a855f7;
+    --cat-rest: #34d399;
+    --cat-imp:  #f43f5e;
+    
+    --radius-lg: 24px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
   }
 
-  *{ box-sizing: border-box; }
-  body{
-    margin:0;
-    font-family:'Inter', sans-serif;
-    background: var(--paper);
-    color: var(--text);
+  [data-theme="light"] {
+    --bg-grad: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #ffe4e6 100%);
+    --card-bg: rgba(255, 255, 255, 0.65);
+    --card-border: rgba(255, 255, 255, 0.8);
+    --glass-hover: rgba(255, 255, 255, 0.85);
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-grad);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-bottom: 40px;
     -webkit-font-smoothing: antialiased;
   }
 
-  header.site{
-    background: linear-gradient(180deg, var(--navy-deep), var(--navy));
-    color: #fff;
-    padding: 22px 28px 18px;
-    border-bottom: 3px solid var(--gold);
-  }
-  .crest-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    max-width: 1080px;
+  /* Header */
+  header {
+    max-width: 1100px;
     margin: 0 auto;
-  }
-  .crest{
-    width: 46px; height:46px;
-    border: 2px solid var(--gold);
-    border-radius: 50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'PT Serif', serif;
-    font-weight:700;
-    font-size: 15px;
-    color: var(--gold-soft);
-    letter-spacing: 0.5px;
-    flex-shrink:0;
-  }
-  .site-title h1{
-    font-family:'PT Serif', serif;
-    font-weight:700;
-    font-size: 22px;
-    margin:0;
-    letter-spacing: 0.3px;
-  }
-  .site-title p{
-    margin: 3px 0 0;
-    font-size: 12.5px;
-    color: #c7d3e6;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
+    padding: 24px 20px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  main{
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 26px 20px 60px;
-    display:grid;
-    grid-template-columns: 1fr 340px;
-    gap: 22px;
-  }
-  @media (max-width: 800px){
-    main{ grid-template-columns: 1fr; }
-  }
-
-  .panel{
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-  }
-
-  .who-bar{
-    grid-column: 1 / -1;
-    display:flex;
-    align-items:center;
+  .logo-group {
+    display: flex;
+    align-items: center;
     gap: 12px;
-    padding: 12px 16px;
-    font-size: 13.5px;
-    color: var(--text-soft);
   }
-  .who-bar strong{ color: var(--text); }
-  .who-bar select{
-    font-family:'Inter',sans-serif;
-    font-size: 13.5px;
-    font-weight: 500;
-    padding: 6px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: #fff;
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+    color: #fff;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+
+  .logo-text h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo-text p { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .theme-toggle, .user-pill {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
   }
-  .dot{
-    width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px;
+
+  .theme-toggle:hover { background: var(--glass-hover); }
+
+  /* Main Container */
+  .container {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
   }
 
-  .cal-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--line);
+  @media (max-width: 860px) {
+    .container { grid-template-columns: 1fr; }
   }
-  .cal-head h2{
-    font-family:'PT Serif', serif;
-    font-size: 18px;
-    margin:0;
+
+  /* Glass Card Base */
+  .glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+
+  /* Stats Bar */
+  .stats-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    gap: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .stat-val { font-size: 22px; font-weight: 800; }
+  .stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+  .progress-wrap {
+    flex-grow: 1;
+    max-width: 300px;
+  }
+
+  .progress-bar-bg {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6366f1, #ec4899);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+
+  /* Calendar Header */
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .cal-title {
+    font-size: 22px;
+    font-weight: 800;
     text-transform: capitalize;
   }
-  .cal-nav{ display:flex; gap:6px; }
-  .cal-nav button{
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    width: 30px; height: 30px;
-    cursor:pointer;
-    font-size: 14px;
-    color: var(--navy);
-  }
-  .cal-nav button:hover{ background: var(--gold-soft); }
 
-  .weekdays{
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid var(--line);
-    background: var(--paper);
+  .nav-btns { display: flex; gap: 8px; }
+
+  .btn-icon {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-main);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
   }
-  .weekdays div{
-    text-align:center;
-    font-size: 11.5px;
+
+  .btn-icon:hover {
+    background: var(--glass-hover);
+    transform: translateY(-2px);
+  }
+
+  /* Grid */
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-soft);
-    padding: 8px 0;
-    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
   }
 
-  .grid{
-    display:grid;
+  .days-grid {
+    display: grid;
     grid-template-columns: repeat(7, 1fr);
-  }
-  .day{
-    min-height: 88px;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 6px;
-    cursor:pointer;
-    position: relative;
-    transition: background 0.12s;
-  }
-  .day:nth-child(7n){ border-right:none; }
-  .day:hover{ background: #fafbfd; }
-  .day.other{ color: #c3c9d4; background: #fbfbfc; }
-  .day.today .num{
-    background: var(--navy);
-    color:#fff;
-    border-radius: 50%;
-  }
-  .day.selected{ outline: 2px solid var(--gold); outline-offset: -2px; }
-  .num{
-    font-size: 12.5px;
-    width: 22px; height: 22px;
-    display:flex; align-items:center; justify-content:center;
-    font-weight: 600;
-    margin-bottom: 4px;
+    gap: 8px;
   }
 
-  .ev-chip{
-    font-size: 11px;
-    font-weight: 600;
-    margin-top: 3px;
-    padding: 2px 6px;
-    border-radius: 4px;
+  .day-cell {
+    aspect-ratio: 1 / 1.1;
+    min-height: 85px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .day-cell:hover {
+    background: var(--glass-hover);
+    transform: translateY(-3px);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 10px 20px var(--accent-glow);
+  }
+
+  .day-cell.other { opacity: 0.3; }
+  
+  .day-cell.today {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.15);
+  }
+
+  .day-cell.selected {
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+  }
+
+  .day-num {
+    font-size: 14px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .day-cell.today .day-num {
+    background: #6366f1;
+    color: #fff;
+  }
+
+  .event-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mini-chip {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 6px;
+    border-radius: 6px;
     color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  }
-  .ev-more{
-    font-size: 10px;
-    color: var(--text-soft);
-    margin-top: 3px;
-    text-align: center;
-    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
-  .side-head{
-    padding: 14px 16px 10px;
-    border-bottom: 1px solid var(--line);
+  .mini-chip.author-A { background: var(--user-a-grad); }
+  .mini-chip.author-B { background: var(--user-b-grad); }
+
+  /* Sidebar Details */
+  .sidebar-header {
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
   }
-  .side-head h3{
-    font-family:'PT Serif', serif;
-    font-size: 16px;
-    margin:0 0 2px;
+
+  .sidebar-header h3 { font-size: 18px; font-weight: 800; }
+  .sidebar-header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 20px;
   }
-  .side-head span{
-    font-size: 12px;
-    color: var(--text-soft);
+
+  .event-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
   }
-  .event-list{
-    padding: 10px 14px;
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-    max-height: 360px;
-    overflow-y:auto;
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .event-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
   }
-  .event-item{
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--navy);
-    border-radius: var(--radius);
-    padding: 10px;
-    background: var(--paper);
+
+  .event-card.author-A::before { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+  .event-card.author-B::before { background: linear-gradient(180deg, #ec4899, #be185d); }
+
+  .event-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
   }
-  .event-item .time-tag{
-    display: inline-block;
+
+  .badge-cat {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .time-badge {
     font-size: 11px;
     font-weight: 700;
-    color: var(--navy);
-    background: #ebeeef;
-    padding: 1px 6px;
-    border-radius: 3px;
-    margin-bottom: 4px;
+    color: var(--text-muted);
   }
-  .event-item .t{
-    font-size: 13.5px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--text);
+
+  .event-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .event-note { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+  .event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
   }
-  .event-item .m{
-    font-size: 11.5px;
-    color: var(--text-soft);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+
+  .author-tag {
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
     gap: 6px;
-    margin-top: 6px;
-  }
-  .event-item .actions{ display:flex; gap:8px; }
-  .event-item .actions button{
-    border:none; background:none; cursor:pointer;
-    font-size: 11px;
-    color: var(--navy);
-    text-decoration: underline;
-    padding:0;
-  }
-  .empty-note{
-    padding: 20px 16px;
-    font-size: 12.5px;
-    color: var(--text-soft);
-    text-align:center;
   }
 
-  .add-form{
-    padding: 12px 16px 16px;
-    border-top: 1px solid var(--line);
+  .avatar-dot {
+    width: 8px; height: 8px; border-radius: 50%;
   }
-  .add-form label{
-    display:block;
-    font-size: 11px;
-    color: var(--text-soft);
-    margin: 8px 0 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    font-weight: 600;
+
+  .actions button {
+    background: none; border: none;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-left: 8px;
   }
-  .add-form input, .add-form textarea{
+
+  .actions button:hover { color: var(--text-main); text-decoration: underline; }
+
+  /* Form */
+  .add-box {
+    border-top: 1px solid var(--card-border);
+    padding-top: 16px;
+  }
+
+  .form-group { margin-bottom: 10px; }
+  .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+
+  .form-control {
     width: 100%;
-    font-family:'Inter',sans-serif;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    color: var(--text-main);
+    font-family: inherit;
     font-size: 13px;
-    padding: 7px 9px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background:#fff;
+    outline: none;
   }
-  .add-form textarea{ resize: vertical; min-height: 44px; }
-  .add-form button.submit{
-    margin-top: 12px;
+
+  .form-control:focus { border-color: #6366f1; }
+
+  .cat-selector {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .cat-opt {
+    flex: 1;
+    text-align: center;
+    padding: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    opacity: 0.6;
+  }
+
+  .cat-opt.active { opacity: 1; border-color: #fff; transform: scale(1.03); }
+
+  .btn-submit {
     width: 100%;
-    background: var(--navy);
-    color: #fff;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
     border: none;
-    border-radius: var(--radius);
-    padding: 9px;
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    color: #fff;
+    font-weight: 700;
     font-size: 13px;
-    font-weight: 600;
-    cursor:pointer;
-    letter-spacing: 0.2px;
-  }
-  .add-form button.submit:hover{ background: var(--navy-deep); }
-
-  footer{
-    text-align:center;
-    padding: 18px;
-    font-size: 11px;
-    color: var(--text-soft);
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--accent-glow);
+    margin-top: 10px;
   }
 
-  .loading{
-    padding: 40px;
-    text-align:center;
-    color: var(--text-soft);
+  .btn-submit:hover { opacity: 0.95; transform: translateY(-1px); }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--text-muted);
     font-size: 13px;
   }
 </style>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 </head>
 <body>
 
-<header class="site">
-  <div class="crest-row">
-    <div class="crest">ОК</div>
-    <div class="site-title">
-      <h1>Общий календарь</h1>
-      <p>записи Насти и Иры</p>
+<header>
+  <div class="logo-group">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">
+      <h1>Календарь</h1>
+      <p>Настя & Ира</p>
     </div>
+  </div>
+
+  <div class="header-actions">
+    <div class="user-pill">
+      <span>👤 Я:</span>
+      <select id="whoSelect" style="background:none; border:none; color:inherit; font-weight:700; cursor:pointer; outline:none;">
+        <option value="A" style="color:#000">Настя</option>
+        <option value="B" style="color:#000">Ира</option>
+      </select>
+    </div>
+    <button class="theme-toggle" id="themeBtn">🌙</button>
   </div>
 </header>
 
-<main>
-  <div class="panel who-bar">
-    <span><strong>Кто вы:</strong></span>
-    <select id="whoSelect">
-      <option value="A">Настя (синий)</option>
-      <option value="B">Ира (красный)</option>
-    </select>
-  </div>
+<div class="container">
 
-  <div class="panel">
-    <div class="cal-head">
-      <h2 id="monthLabel">—</h2>
-      <div class="cal-nav">
-        <button id="prevBtn">‹</button>
-        <button id="todayBtn" style="width:auto;padding:0 10px;">Сегодня</button>
-        <button id="nextBtn">›</button>
+  <!-- Stats Bar -->
+  <div class="glass-card stats-bar">
+    <div class="stat-item">
+      <div>
+        <div class="stat-val" id="totalMonthEvs">0</div>
+        <div class="stat-lbl">Событий в этом месяце</div>
       </div>
     </div>
+    <div class="progress-wrap">
+      <div class="stat-lbl" style="display:flex; justify-content:space-between;">
+        <span>Загруженность месяца</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Section -->
+  <div class="glass-card">
+    <div class="cal-header">
+      <div class="cal-title" id="monthLabel">—</div>
+      <div class="nav-btns">
+        <button class="btn-icon" id="prevBtn">‹</button>
+        <button class="btn-icon" id="todayBtn" style="width:auto; padding:0 12px; font-size:12px;">Сегодня</button>
+        <button class="btn-icon" id="nextBtn">›</button>
+      </div>
+    </div>
+
     <div class="weekdays">
       <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
     </div>
-    <div class="grid" id="calGrid">
-      <div class="loading">Загрузка базы данных…</div>
-    </div>
+
+    <div class="days-grid" id="calGrid"></div>
   </div>
 
-  <div class="panel" id="sidePanel" style="height:fit-content;">
-    <div class="side-head">
+  <!-- Sidebar Section -->
+  <div class="glass-card">
+    <div class="sidebar-header">
       <h3 id="selDateLabel">Выберите день</h3>
-      <span id="selDateSub">Нажмите на день в календаре, чтобы посмотреть или добавить план</span>
+      <p id="selDateSub">Нажмите на дату в календаре</p>
     </div>
+
     <div class="event-list" id="eventList">
-      <div class="empty-note">Нажмите на дату в сетке</div>
+      <div class="empty-state">Выберите день для просмотра планов</div>
     </div>
-    <div class="add-form" id="addForm" style="display:none;">
-      <label>Время</label>
-      <input type="text" id="evTime" placeholder="например, 14:00 или 14:00 - 15:00">
-      <label>План / Название</label>
-      <input type="text" id="evTitle" placeholder="Что запланировано">
-      <label>Заметка / Подробности</label>
-      <textarea id="evNote" placeholder="Дополнительные детали…"></textarea>
-      <button class="submit" id="addBtn">Добавить запись</button>
+
+    <div class="add-box" id="addForm" style="display:none;">
+      <div class="form-group">
+        <label>Категория</label>
+        <div class="cat-selector">
+          <div class="cat-opt active" data-cat="work" style="background:var(--cat-work)">Работа</div>
+          <div class="cat-opt" data-cat="meet" style="background:var(--cat-meet)">Встреча</div>
+          <div class="cat-opt" data-cat="rest" style="background:var(--cat-rest)">Отдых</div>
+          <div class="cat-opt" data-cat="imp" style="background:var(--cat-imp)">Важное</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Время</label>
+        <input type="text" class="form-control" id="evTime" placeholder="14:00">
+      </div>
+
+      <div class="form-group">
+        <label>Что запланировано</label>
+        <input type="text" class="form-control" id="evTitle" placeholder="Название события">
+      </div>
+
+      <div class="form-group">
+        <label>Заметка</label>
+        <textarea class="form-control" id="evNote" rows="2" placeholder="Детали..."></textarea>
+      </div>
+
+      <button class="btn-submit" id="addBtn">Добавить запись</button>
     </div>
   </div>
-</main>
 
-<footer>Календарь записей</footer>
+</div>
 
 <script>
 const firebaseConfig = {
@@ -402,16 +584,44 @@ const firebaseConfig = {
   measurementId: "G-81EQ7N0J5V"
 };
 
-// Инициализация Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+const CATS = {
+  work: { label: 'Работа', color: 'var(--cat-work)' },
+  meet: { label: 'Встреча', color: 'var(--cat-meet)' },
+  rest: { label: 'Отдых', color: 'var(--cat-rest)' },
+  imp:  { label: 'Важное', color: 'var(--cat-imp)' }
+};
 
-let events = {}; 
+let events = {};
 let viewDate = new Date();
 let selectedDate = null;
 let currentUser = localStorage.getItem('calUser') || 'A';
+let selectedCategory = 'work';
+
+// Theme Toggle
+const themeBtn = document.getElementById('themeBtn');
+let isDark = localStorage.getItem('calTheme') !== 'light';
+if(!isDark) document.documentElement.setAttribute('data-theme', 'light');
+themeBtn.textContent = isDark ? '🌙' : '☀️';
+
+themeBtn.addEventListener('click', () => {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  localStorage.setItem('calTheme', isDark ? 'dark' : 'light');
+  themeBtn.textContent = isDark ? '🌙' : '☀️';
+});
+
+// Category Selector
+document.querySelectorAll('.cat-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.cat-opt').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    selectedCategory = opt.dataset.cat;
+  });
+});
 
 const whoSelect = document.getElementById('whoSelect');
 whoSelect.value = currentUser;
@@ -424,16 +634,12 @@ function pad(n){ return n < 10 ? '0'+n : ''+n; }
 function dateKey(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
 function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
 
-// Подписка на синхронизацию в реальном времени
 db.ref('events').on('value', (snapshot) => {
   const data = snapshot.val();
   events = {};
   if (data) {
     Object.keys(data).forEach(key => {
-      events[key] = Object.keys(data[key]).map(id => ({
-        id: id,
-        ...data[key][id]
-      }));
+      events[key] = Object.keys(data[key]).map(id => ({ id, ...data[key][id] }));
     });
   }
   renderCalendar();
@@ -446,7 +652,7 @@ function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[month] + ' ' + year;
 
   const first = new Date(year, month, 1);
-  let startOffset = first.getDay() - 1; 
+  let startOffset = first.getDay() - 1;
   if(startOffset < 0) startOffset = 6;
 
   const daysInMonth = new Date(year, month+1, 0).getDate();
@@ -459,7 +665,7 @@ function renderCalendar(){
   for(let d=1; d<=daysInMonth; d++){
     cells.push({ day: d, other: false, date: new Date(year, month, d) });
   }
-  while(cells.length % 7 !== 0 || cells.length < 42){
+  while(cells.length % 7 !== 0 || cells.length < 35){
     const idx = cells.length - (startOffset + daysInMonth) + 1;
     cells.push({ day: idx, other: true, date: new Date(year, month+1, idx) });
   }
@@ -468,44 +674,56 @@ function renderCalendar(){
   const grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
+  let monthEventCount = 0;
+
   cells.forEach(cell => {
     const key = dateKey(cell.date);
     const dayEvents = events[key] || [];
+    if(!cell.other) monthEventCount += dayEvents.length;
+
     const div = document.createElement('div');
-    div.className = 'day' + (cell.other ? ' other' : '') + (sameDay(cell.date, today) ? ' today' : '') + (selectedDate && sameDay(cell.date, selectedDate) ? ' selected' : '');
+    div.className = 'day-cell' + (cell.other ? ' other' : '') + (sameDay(cell.date, today) ? ' today' : '') + (selectedDate && sameDay(cell.date, selectedDate) ? ' selected' : '');
 
     const num = document.createElement('div');
-    num.className = 'num';
+    num.className = 'day-num';
     num.textContent = cell.day;
     div.appendChild(num);
 
-    dayEvents.slice(0,3).forEach(ev => {
+    const dots = document.createElement('div');
+    dots.className = 'event-dots';
+
+    dayEvents.slice(0, 2).forEach(ev => {
       const chip = document.createElement('div');
-      chip.className = 'ev-chip';
-      chip.style.background = ev.author === 'B' ? 'var(--userB)' : 'var(--userA)';
-      chip.textContent = ev.time ? ev.time : ev.title;
-      chip.title = (ev.time ? ev.time + ' — ' : '') + ev.title;
-      div.appendChild(chip);
+      chip.className = `mini-chip author-${ev.author}`;
+      chip.textContent = ev.time ? `${ev.time} ${ev.title}` : ev.title;
+      dots.appendChild(chip);
     });
 
-    if(dayEvents.length > 3){
+    if(dayEvents.length > 2) {
       const more = document.createElement('div');
-      more.className = 'ev-more';
-      more.textContent = '+' + (dayEvents.length - 3) + ' ещё';
-      div.appendChild(more);
+      more.style.fontSize = '9px';
+      more.style.fontWeight = '700';
+      more.style.color = 'var(--text-muted)';
+      more.textContent = `+${dayEvents.length - 2} ещё`;
+      dots.appendChild(more);
     }
+
+    div.appendChild(dots);
 
     div.addEventListener('click', () => {
       selectedDate = cell.date;
       renderCalendar();
       renderSidebar();
-      if (window.innerWidth <= 800) {
-        document.getElementById('sidePanel').scrollIntoView({ behavior: 'smooth' });
-      }
     });
 
     grid.appendChild(div);
   });
+
+  // Update Stats
+  document.getElementById('totalMonthEvs').textContent = monthEventCount;
+  const pct = Math.min(Math.round((monthEventCount / 30) * 100), 100);
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = `${pct}%`;
 }
 
 function renderSidebar(){
@@ -521,98 +739,53 @@ function renderSidebar(){
   list.innerHTML = '';
 
   if(dayEvents.length === 0){
-    list.innerHTML = '<div class="empty-note">На этот день планов пока нет</div>';
+    list.innerHTML = '<div class="empty-state">На этот день ничего не запланировано ☕️</div>';
   } else {
     dayEvents.sort((a,b) => (a.time||'').localeCompare(b.time||''));
     dayEvents.forEach(ev => {
-      const item = document.createElement('div');
-      item.className = 'event-item';
-      item.style.borderLeftColor = ev.author === 'B' ? 'var(--userB)' : 'var(--userA)';
+      const card = document.createElement('div');
+      card.className = `event-card author-${ev.author}`;
 
-      if(ev.time){
-        const timeTag = document.createElement('div');
-        timeTag.className = 'time-tag';
-        timeTag.textContent = ev.time;
-        item.appendChild(timeTag);
-      }
+      const catInfo = CATS[ev.category || 'work'];
 
-      const t = document.createElement('div');
-      t.className = 't';
-      t.textContent = ev.title;
-      item.appendChild(t);
-
-      if(ev.note){
-        const n = document.createElement('div');
-        n.style.fontSize = '12px';
-        n.style.color = 'var(--text-soft)';
-        n.style.margin = '4px 0';
-        n.textContent = ev.note;
-        item.appendChild(n);
-      }
-
-      const m = document.createElement('div');
-      m.className = 'm';
-      const who = document.createElement('span');
-      who.innerHTML = '<span class="dot" style="background:' + (ev.author==='B' ? 'var(--userB)' : 'var(--userA)') + '"></span>' + (ev.author === 'B' ? 'Ира' : 'Настя');
-      
-      const actions = document.createElement('span');
-      actions.className = 'actions';
-      const editBtn = document.createElement('button');
-      editBtn.textContent = 'Изменить';
-      editBtn.addEventListener('click', () => startEdit(key, ev));
-      const delBtn = document.createElement('button');
-      delBtn.textContent = 'Удалить';
-      delBtn.addEventListener('click', () => deleteEvent(key, ev.id));
-      
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
-      m.appendChild(who);
-      m.appendChild(actions);
-      item.appendChild(m);
-
-      list.appendChild(item);
+      card.innerHTML = `
+        <div class="event-meta">
+          <span class="badge-cat" style="background:${catInfo.color}">${catInfo.label}</span>
+          <span class="time-badge">${ev.time || 'Весь день'}</span>
+        </div>
+        <div class="event-title">${ev.title}</div>
+        ${ev.note ? `<div class="event-note">${ev.note}</div>` : ''}
+        <div class="event-footer">
+          <div class="author-tag">
+            <span class="avatar-dot" style="background:${ev.author === 'B' ? '#ec4899' : '#3b82f6'}"></span>
+            ${ev.author === 'B' ? 'Ира' : 'Настя'}
+          </div>
+          <div class="actions">
+            <button onclick="deleteEvent('${key}', '${ev.id}')">Удалить</button>
+          </div>
+        </div>
+      `;
+      list.appendChild(card);
     });
   }
 
   document.getElementById('evTitle').value = '';
   document.getElementById('evTime').value = '';
   document.getElementById('evNote').value = '';
-  document.getElementById('addBtn').textContent = 'Добавить план';
   document.getElementById('addBtn').onclick = () => addEvent(key);
 }
 
 function addEvent(key){
   const title = document.getElementById('evTitle').value.trim();
-  if(!title){ alert('Укажите название плана'); return; }
-  const time = document.getElementById('evTime').value.trim();
-  const note = document.getElementById('evNote').value.trim();
+  if(!title){ alert('Введите название!'); return; }
 
-  const newRef = db.ref('events/' + key).push();
-  newRef.set({
+  db.ref('events/' + key).push({
     title: title,
-    time: time,
-    note: note,
+    time: document.getElementById('evTime').value.trim(),
+    note: document.getElementById('evNote').value.trim(),
+    category: selectedCategory,
     author: currentUser
   });
-}
-
-function startEdit(key, ev){
-  document.getElementById('evTitle').value = ev.title;
-  document.getElementById('evTime').value = ev.time || '';
-  document.getElementById('evNote').value = ev.note || '';
-  const btn = document.getElementById('addBtn');
-  btn.textContent = 'Сохранить изменения';
-  btn.onclick = () => {
-    const title = document.getElementById('evTitle').value.trim();
-    if(!title){ alert('Укажите название плана'); return; }
-    
-    db.ref('events/' + key + '/' + ev.id).update({
-      title: title,
-      time: document.getElementById('evTime').value.trim(),
-      note: document.getElementById('evNote').value.trim()
-    });
-  };
-  document.getElementById('evTitle').focus();
 }
 
 function deleteEvent(key, id){
