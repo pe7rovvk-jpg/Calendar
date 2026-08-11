@@ -10,14 +10,14 @@
 
 <style>
   :root {
-    --bg-main: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --card-border: rgba(226, 232, 240, 0.8);
+    --bg-main: #f4f6fa;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: #e2e8f0;
     --text-main: #0f172a;
     --text-muted: #64748b;
     
-    --user-a-grad: linear-gradient(135deg, #6366f1, #4f46e5);
-    --user-b-grad: linear-gradient(135deg, #ec4899, #f43f5e);
+    --user-a-grad: linear-gradient(135deg, #4f46e5, #6366f1);
+    --user-b-grad: linear-gradient(135deg, #e11d48, #f43f5e);
     
     --cat-work: #0284c7;
     --cat-meet: #7c3aed;
@@ -25,7 +25,7 @@
     --cat-imp:  #f43f5e;
     
     --radius-lg: 20px;
-    --radius-md: 12px;
+    --radius-md: 10px;
     --radius-sm: 8px;
   }
 
@@ -37,36 +37,14 @@
     color: var(--text-main);
     min-height: 100vh;
     padding: 12px 10px 40px;
-    position: relative;
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Размытые мягкие фигуры на фоне */
-  .bg-shape {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(70px);
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-  }
-  .bg-shape-1 {
-    width: 280px; height: 280px;
-    background: #c7d2fe;
-    top: -50px; left: -50px;
-  }
-  .bg-shape-2 {
-    width: 300px; height: 300px;
-    background: #fbcfe8;
-    bottom: -50px; right: -50px;
-  }
-
-  header, .container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+  header, .container { max-width: 500px; margin: 0 auto; }
 
   /* Шапка */
   header {
-    padding: 8px 4px 14px;
+    padding: 10px 4px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -75,24 +53,23 @@
   .logo-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
-  /* Трендовый иконка-значок (SVG Sparkle Gradient) */
+  /* Новый стильный SVG значок */
   .logo-icon {
-    width: 40px; height: 40px;
+    width: 42px; height: 42px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
   }
 
   .logo-icon svg {
-    width: 22px; height: 22px; fill: none; stroke: #ffffff;
-    stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+    width: 22px; height: 22px; fill: #ffffff;
   }
 
-  .logo-text h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.4px; color: #0f172a; }
+  .logo-text h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #0f172a; }
   .logo-text p { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
   .user-pill {
@@ -102,7 +79,7 @@
     padding: 6px 12px;
     display: flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
   }
 
   .container {
@@ -111,15 +88,13 @@
     gap: 12px;
   }
 
-  /* Glass Card */
+  /* Card */
   .glass-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border-radius: var(--radius-lg);
-    padding: 16px;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.03);
+    padding: 14px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
   }
 
   /* Stats Bar */
@@ -127,13 +102,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 10px 14px;
   }
 
   .stat-val { font-size: 18px; font-weight: 800; color: #0f172a; }
   .stat-lbl { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
-  .progress-wrap { width: 140px; }
+  .progress-wrap { width: 130px; }
   .progress-bar-bg {
     height: 6px; background: #e2e8f0;
     border-radius: 10px; overflow: hidden; margin-top: 4px;
@@ -152,26 +127,26 @@
     margin-bottom: 12px;
   }
 
-  .cal-title { font-size: 18px; font-weight: 800; text-transform: capitalize; color: #0f172a; }
+  .cal-title { font-size: 17px; font-weight: 800; text-transform: capitalize; color: #0f172a; }
 
   .nav-btns { display: flex; gap: 6px; }
 
   .btn-icon {
-    height: 32px; padding: 0 10px;
+    height: 30px; padding: 0 10px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
     background: #ffffff;
     color: var(--text-main);
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-size: 12px; font-weight: 700;
   }
 
-  /* Grid */
+  /* ФИКС СЕТКИ: Все 7 столбцов СТРОГО равной ширины */
   .weekdays {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     text-align: center;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -180,21 +155,23 @@
 
   .days-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 4px;
+    width: 100%;
   }
 
   .day-cell {
-    min-height: 68px;
+    min-height: 62px;
+    min-width: 0; /* Важно: предотвращает растягивание */
     background: #ffffff;
-    border: 1px solid #edf2f7;
+    border: 1px solid #e2e8f0;
     border-radius: var(--radius-md);
-    padding: 5px;
+    padding: 4px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: all 0.15s ease;
+    overflow: hidden;
   }
 
   .day-cell.other { opacity: 0.3; background: #f8fafc; }
@@ -206,34 +183,37 @@
 
   .day-cell.selected {
     border: 2px solid #8b5cf6;
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
   }
 
   .day-num {
-    font-size: 12px; font-weight: 800;
-    width: 20px; height: 20px;
+    font-size: 11px; font-weight: 800;
+    width: 18px; height: 18px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 5px; color: #334155;
+    border-radius: 4px; color: #334155;
   }
 
   .day-cell.today .day-num { background: #6366f1; color: #fff; }
 
-  .event-dots { display: flex; flex-direction: column; gap: 2px; }
+  /* Контейнер для меток внутри дня */
+  .event-dots { display: flex; flex-direction: column; gap: 2px; width: 100%; min-width: 0; }
 
-  .mini-chip {
-    font-size: 9px; font-weight: 700;
-    padding: 2px 4px; border-radius: 4px;
-    color: #fff;
+  /* Тлько время внутри ячейки дня */
+  .time-chip {
+    font-size: 9px; font-weight: 800;
+    padding: 2px 0; border-radius: 4px;
+    color: #fff; text-align: center;
+    width: 100%;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  .mini-chip.author-A { background: var(--user-a-grad); }
-  .mini-chip.author-B { background: var(--user-b-grad); }
+  .time-chip.author-A { background: var(--user-a-grad); }
+  .time-chip.author-B { background: var(--user-b-grad); }
 
-  /* Sidebar Details */
+  /* Панель деталей снизу */
   .sidebar-header {
     border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 10px; margin-bottom: 10px;
+    padding-bottom: 8px; margin-bottom: 10px;
   }
 
   .sidebar-header h3 { font-size: 15px; font-weight: 800; color: #0f172a; }
@@ -253,7 +233,7 @@
 
   .event-card::before {
     content: ''; position: absolute;
-    left: 0; top: 0; bottom: 0; width: 3px;
+    left: 0; top: 0; bottom: 0; width: 4px;
   }
 
   .event-card.author-A::before { background: var(--user-a-grad); }
@@ -261,19 +241,19 @@
 
   .event-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .badge-cat { font-size: 8.5px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; color: #fff; }
-  .time-badge { font-size: 10px; font-weight: 700; color: var(--text-muted); }
-  .event-title { font-size: 12.5px; font-weight: 700; color: #0f172a; }
-  .event-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .time-badge { font-size: 11px; font-weight: 800; color: #4338ca; background: #e0e7ff; padding: 1px 6px; border-radius: 4px; }
+  .event-title { font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 2px; }
+  .event-note { font-size: 11px; color: var(--text-muted); margin-top: 4px; background: #f8fafc; padding: 6px; border-radius: 6px; }
 
   .event-footer {
     display: flex; justify-content: space-between; align-items: center;
-    margin-top: 6px; padding-top: 4px; border-top: 1px solid #f1f5f9;
+    margin-top: 8px; padding-top: 4px; border-top: 1px solid #f1f5f9;
   }
 
-  .author-tag { font-size: 10px; font-weight: 700; color: #334155; }
+  .author-tag { font-size: 10px; font-weight: 700; color: #475569; }
   .actions button { background: none; border: none; font-size: 10px; font-weight: 700; color: #ef4444; cursor: pointer; }
 
-  /* Form */
+  /* Форма */
   .add-box { border-top: 1px solid #e2e8f0; padding-top: 10px; }
   .form-group { margin-bottom: 8px; }
   .form-group label { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
@@ -309,19 +289,16 @@
 </head>
 <body>
 
-<div class="bg-shape bg-shape-1"></div>
-<div class="bg-shape bg-shape-2"></div>
-
 <header>
   <div class="logo-group">
-    <!-- Трендовая стильная SVG иконка -->
+    <!-- Иконка Календарь iOS -->
     <div class="logo-icon">
       <svg viewBox="0 0 24 24">
-        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM7 12h5v5H7z"/>
       </svg>
     </div>
     <div class="logo-text">
-      <h1>Календарь</h1>
+      <h1>Общий Календарь</h1>
       <p>Настя & Ира</p>
     </div>
   </div>
@@ -372,15 +349,15 @@
     <div class="days-grid" id="calGrid"></div>
   </div>
 
-  <!-- Sidebar Section -->
+  <!-- Sidebar Details Section -->
   <div class="glass-card">
     <div class="sidebar-header">
       <h3 id="selDateLabel">Выберите день</h3>
-      <p id="selDateSub">Нажмите на дату в сетке</p>
+      <p id="selDateSub">Нажмите на ячейку в календаре</p>
     </div>
 
     <div class="event-list" id="eventList">
-      <div class="empty-state">Выберите день для просмотра планов</div>
+      <div class="empty-state">Нажмите на день, чтобы посмотреть или добавить запись</div>
     </div>
 
     <div class="add-box" id="addForm" style="display:none;">
@@ -396,20 +373,20 @@
 
       <div class="form-group">
         <label>Время</label>
-        <input type="text" class="form-control" id="evTime" placeholder="14:00">
+        <input type="text" class="form-control" id="evTime" placeholder="Например: 15:00">
       </div>
 
       <div class="form-group">
-        <label>Запланировано</label>
-        <input type="text" class="form-control" id="evTitle" placeholder="Событие">
+        <label>Куда / Что запланировано</label>
+        <input type="text" class="form-control" id="evTitle" placeholder="Например: Кремень / Встреча">
       </div>
 
       <div class="form-group">
-        <label>Заметка</label>
-        <textarea class="form-control" id="evNote" rows="2" placeholder="Детали..."></textarea>
+        <label>Пометки и заметки</label>
+        <textarea class="form-control" id="evNote" rows="2" placeholder="Дополнительная информация..."></textarea>
       </div>
 
-      <button class="btn-submit" id="addBtn">Добавить</button>
+      <button class="btn-submit" id="addBtn">Добавить запись</button>
     </div>
   </div>
 
@@ -521,17 +498,19 @@ function renderCalendar(){
     const dots = document.createElement('div');
     dots.className = 'event-dots';
 
+    // В ЯЧЕЙКЕ ОТОБРАЖАЕТСЯ ТОЛЬКО ВРЕМЯ (или точка)
     dayEvents.slice(0, 2).forEach(ev => {
       const chip = document.createElement('div');
-      chip.className = `mini-chip author-${ev.author}`;
-      chip.textContent = ev.time ? `${ev.time} ${ev.title}` : ev.title;
+      chip.className = `time-chip author-${ev.author}`;
+      chip.textContent = ev.time ? ev.time : 'Запись';
       dots.appendChild(chip);
     });
 
     if(dayEvents.length > 2) {
       const more = document.createElement('div');
-      more.style.fontSize = '8.5px';
+      more.style.fontSize = '8px';
       more.style.fontWeight = '800';
+      more.style.textAlign = 'center';
       more.style.color = 'var(--text-muted)';
       more.textContent = `+${dayEvents.length - 2}`;
       dots.appendChild(more);
@@ -567,7 +546,7 @@ function renderSidebar(){
   list.innerHTML = '';
 
   if(dayEvents.length === 0){
-    list.innerHTML = '<div class="empty-state">Свободный день ☕️</div>';
+    list.innerHTML = '<div class="empty-state">Нет записей на этот день ☕️</div>';
   } else {
     dayEvents.sort((a,b) => (a.time||'').localeCompare(b.time||''));
     dayEvents.forEach(ev => {
@@ -582,10 +561,10 @@ function renderSidebar(){
           <span class="time-badge">${ev.time || 'Весь день'}</span>
         </div>
         <div class="event-title">${ev.title}</div>
-        ${ev.note ? `<div class="event-note">${ev.note}</div>` : ''}
+        ${ev.note ? `<div class="event-note">📌 ${ev.note}</div>` : ''}
         <div class="event-footer">
           <div class="author-tag">
-            ${ev.author === 'B' ? 'Ира' : 'Настя'}
+            Добавил(а): <b>${ev.author === 'B' ? 'Ира' : 'Настя'}</b>
           </div>
           <div class="actions">
             <button onclick="deleteEvent('${key}', '${ev.id}')">Удалить</button>
@@ -604,7 +583,7 @@ function renderSidebar(){
 
 function addEvent(key){
   const title = document.getElementById('evTitle').value.trim();
-  if(!title){ alert('Введите название!'); return; }
+  if(!title){ alert('Заполните поле "Куда / Что запланировано"!'); return; }
 
   db.ref('events/' + key).push({
     title: title,
