@@ -1,4 +1,3 @@
-Вот готовый файл calendar.html. Вы можете скачать его или скопировать содержимое и сохранить с расширением .html:
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -90,7 +89,6 @@
     border-radius: var(--radius);
   }
 
-  /* who am I bar */
   .who-bar{
     grid-column: 1 / -1;
     display:flex;
@@ -115,7 +113,6 @@
     width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px;
   }
 
-  /* calendar */
   .cal-head{
     display:flex; align-items:center; justify-content:space-between;
     padding: 14px 18px;
@@ -185,7 +182,6 @@
     margin-bottom: 4px;
   }
 
-  /* Компактные плашки времени */
   .ev-chip{
     font-size: 11px;
     font-weight: 600;
@@ -208,7 +204,6 @@
     font-weight: 500;
   }
 
-  /* side panel */
   .side-head{
     padding: 14px 16px 10px;
     border-bottom: 1px solid var(--line);
@@ -329,6 +324,11 @@
     font-size: 13px;
   }
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
 <body>
 
@@ -349,7 +349,6 @@
       <option value="A">Настя (синий)</option>
       <option value="B">Ира (красный)</option>
     </select>
-    <span id="loadStatus" style="margin-left:auto;font-size:11.5px;"></span>
   </div>
 
   <div class="panel">
@@ -365,7 +364,7 @@
       <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
     </div>
     <div class="grid" id="calGrid">
-      <div class="loading">Загрузка…</div>
+      <div class="loading">Загрузка базы данных…</div>
     </div>
   </div>
 
@@ -389,13 +388,27 @@
   </div>
 </main>
 
-<footer>Данные общие для Насти и Иры</footer>
+<footer>Календарь записей</footer>
 
 <script>
-const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
-const STORAGE_KEY = 'shared-calendar-events-v2';
+const firebaseConfig = {
+  apiKey: "AIzaSyDFhYdhoxk3dT8ylTmFRa4_3f0FreoNxrU",
+  authDomain: "calendar-71517.firebaseapp.com",
+  databaseURL: "https://calendar-71517-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "calendar-71517",
+  storageBucket: "calendar-71517.firebasestorage.app",
+  messagingSenderId: "374541828108",
+  appId: "1:374541828108:web:96a470cc33bfa7ebe96e29",
+  measurementId: "G-81EQ7N0J5V"
+};
 
-let events = {}; // { 'YYYY-MM-DD': [ {id,title,time,note,author} ] }
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+let events = {}; 
 let viewDate = new Date();
 let selectedDate = null;
 let currentUser = localStorage.getItem('calUser') || 'A';
@@ -411,29 +424,21 @@ function pad(n){ return n < 10 ? '0'+n : ''+n; }
 function dateKey(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
 function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
 
-async function loadEvents(){
-  const statusEl = document.getElementById('loadStatus');
-  statusEl.textContent = 'загрузка…';
-  try{
-    const result = await window.storage.get(STORAGE_KEY, true);
-    events = result && result.value ? JSON.parse(result.value) : {};
-    statusEl.textContent = '';
-  }catch(e){
-    events = {};
-    statusEl.textContent = '';
+// Подписка на синхронизацию в реальном времени
+db.ref('events').on('value', (snapshot) => {
+  const data = snapshot.val();
+  events = {};
+  if (data) {
+    Object.keys(data).forEach(key => {
+      events[key] = Object.keys(data[key]).map(id => ({
+        id: id,
+        ...data[key][id]
+      }));
+    });
   }
   renderCalendar();
   if(selectedDate) renderSidebar();
-}
-
-async function saveEvents(){
-  try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(events), true);
-  }catch(e){
-    console.error('Storage save failed', e);
-    alert('Не удалось сохранить. Попробуйте ещё раз.');
-  }
-}
+});
 
 function renderCalendar(){
   const year = viewDate.getFullYear();
@@ -441,7 +446,7 @@ function renderCalendar(){
   document.getElementById('monthLabel').textContent = MONTHS[month] + ' ' + year;
 
   const first = new Date(year, month, 1);
-  let startOffset = first.getDay() - 1; // Monday = 0
+  let startOffset = first.getDay() - 1; 
   if(startOffset < 0) startOffset = 6;
 
   const daysInMonth = new Date(year, month+1, 0).getDate();
@@ -474,12 +479,10 @@ function renderCalendar(){
     num.textContent = cell.day;
     div.appendChild(num);
 
-    // Показывать в ячейке времени короткий бейдж с временем
     dayEvents.slice(0,3).forEach(ev => {
       const chip = document.createElement('div');
       chip.className = 'ev-chip';
       chip.style.background = ev.author === 'B' ? 'var(--userB)' : 'var(--userA)';
-      // Отображаем время. Если время не указано, выводим краткий заголовок
       chip.textContent = ev.time ? ev.time : ev.title;
       chip.title = (ev.time ? ev.time + ' — ' : '') + ev.title;
       div.appendChild(chip);
@@ -578,21 +581,19 @@ function renderSidebar(){
   document.getElementById('addBtn').onclick = () => addEvent(key);
 }
 
-async function addEvent(key){
+function addEvent(key){
   const title = document.getElementById('evTitle').value.trim();
   if(!title){ alert('Укажите название плана'); return; }
   const time = document.getElementById('evTime').value.trim();
   const note = document.getElementById('evNote').value.trim();
 
-  if(!events[key]) events[key] = [];
-  events[key].push({
-    id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
-    title, time, note, author: currentUser
+  const newRef = db.ref('events/' + key).push();
+  newRef.set({
+    title: title,
+    time: time,
+    note: note,
+    author: currentUser
   });
-
-  await saveEvents();
-  renderCalendar();
-  renderSidebar();
 }
 
 function startEdit(key, ev){
@@ -601,25 +602,21 @@ function startEdit(key, ev){
   document.getElementById('evNote').value = ev.note || '';
   const btn = document.getElementById('addBtn');
   btn.textContent = 'Сохранить изменения';
-  btn.onclick = async () => {
+  btn.onclick = () => {
     const title = document.getElementById('evTitle').value.trim();
     if(!title){ alert('Укажите название плана'); return; }
-    ev.title = title;
-    ev.time = document.getElementById('evTime').value.trim();
-    ev.note = document.getElementById('evNote').value.trim();
-    await saveEvents();
-    renderCalendar();
-    renderSidebar();
+    
+    db.ref('events/' + key + '/' + ev.id).update({
+      title: title,
+      time: document.getElementById('evTime').value.trim(),
+      note: document.getElementById('evNote').value.trim()
+    });
   };
   document.getElementById('evTitle').focus();
 }
 
-async function deleteEvent(key, id){
-  events[key] = (events[key] || []).filter(e => e.id !== id);
-  if(events[key].length === 0) delete events[key];
-  await saveEvents();
-  renderCalendar();
-  renderSidebar();
+function deleteEvent(key, id){
+  db.ref('events/' + key + '/' + id).remove();
 }
 
 document.getElementById('prevBtn').addEventListener('click', () => {
@@ -634,10 +631,7 @@ document.getElementById('todayBtn').addEventListener('click', () => {
   viewDate = new Date();
   renderCalendar();
 });
-
-loadEvents();
 </script>
 
 </body>
 </html>
-
