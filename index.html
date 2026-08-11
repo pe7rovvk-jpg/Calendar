@@ -56,7 +56,6 @@
     gap: 12px;
   }
 
-  /* Новый стильный SVG значок */
   .logo-icon {
     width: 42px; height: 42px;
     border-radius: 12px;
@@ -88,7 +87,6 @@
     gap: 12px;
   }
 
-  /* Card */
   .glass-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -141,7 +139,7 @@
     cursor: pointer; font-size: 12px; font-weight: 700;
   }
 
-  /* ФИКС СЕТКИ: Все 7 столбцов СТРОГО равной ширины */
+  /* Сетка строго равной ширины */
   .weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -162,7 +160,7 @@
 
   .day-cell {
     min-height: 62px;
-    min-width: 0; /* Важно: предотвращает растягивание */
+    min-width: 0;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: var(--radius-md);
@@ -195,10 +193,8 @@
 
   .day-cell.today .day-num { background: #6366f1; color: #fff; }
 
-  /* Контейнер для меток внутри дня */
   .event-dots { display: flex; flex-direction: column; gap: 2px; width: 100%; min-width: 0; }
 
-  /* Тлько время внутри ячейки дня */
   .time-chip {
     font-size: 9px; font-weight: 800;
     padding: 2px 0; border-radius: 4px;
@@ -210,7 +206,7 @@
   .time-chip.author-A { background: var(--user-a-grad); }
   .time-chip.author-B { background: var(--user-b-grad); }
 
-  /* Панель деталей снизу */
+  /* Панель деталей */
   .sidebar-header {
     border-bottom: 1px solid #e2e8f0;
     padding-bottom: 8px; margin-bottom: 10px;
@@ -243,15 +239,19 @@
   .badge-cat { font-size: 8.5px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; color: #fff; }
   .time-badge { font-size: 11px; font-weight: 800; color: #4338ca; background: #e0e7ff; padding: 1px 6px; border-radius: 4px; }
   .event-title { font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 2px; }
-  .event-note { font-size: 11px; color: var(--text-muted); margin-top: 4px; background: #f8fafc; padding: 6px; border-radius: 6px; }
+  .event-note { font-size: 11px; color: var(--text-muted); margin-top: 4px; background: #f8fafc; padding: 6px; border-radius: 6px; word-break: break-word; }
 
   .event-footer {
     display: flex; justify-content: space-between; align-items: center;
-    margin-top: 8px; padding-top: 4px; border-top: 1px solid #f1f5f9;
+    margin-top: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9;
   }
 
   .author-tag { font-size: 10px; font-weight: 700; color: #475569; }
-  .actions button { background: none; border: none; font-size: 10px; font-weight: 700; color: #ef4444; cursor: pointer; }
+  
+  .actions { display: flex; gap: 8px; }
+  .actions button { background: none; border: none; font-size: 10.5px; font-weight: 700; cursor: pointer; }
+  .btn-edit { color: #4f46e5; }
+  .btn-del { color: #ef4444; }
 
   /* Форма */
   .add-box { border-top: 1px solid #e2e8f0; padding-top: 10px; }
@@ -274,11 +274,20 @@
 
   .cat-opt.active { opacity: 1; }
 
+  .form-btns { display: flex; gap: 6px; margin-top: 6px; }
+
   .btn-submit {
-    width: 100%; background: linear-gradient(135deg, #6366f1, #a855f7);
+    flex: 1; background: linear-gradient(135deg, #6366f1, #a855f7);
     border: none; border-radius: var(--radius-sm);
     padding: 9px; color: #fff; font-weight: 800; font-size: 12px;
-    cursor: pointer; margin-top: 6px;
+    cursor: pointer;
+  }
+
+  .btn-cancel {
+    background: #e2e8f0; color: #475569;
+    border: none; border-radius: var(--radius-sm);
+    padding: 9px 12px; font-weight: 800; font-size: 12px;
+    cursor: pointer; display: none;
   }
 
   .empty-state { text-align: center; padding: 16px 10px; color: var(--text-muted); font-size: 12px; }
@@ -291,7 +300,6 @@
 
 <header>
   <div class="logo-group">
-    <!-- Иконка Календарь iOS -->
     <div class="logo-icon">
       <svg viewBox="0 0 24 24">
         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM7 12h5v5H7z"/>
@@ -386,7 +394,10 @@
         <textarea class="form-control" id="evNote" rows="2" placeholder="Дополнительная информация..."></textarea>
       </div>
 
-      <button class="btn-submit" id="addBtn">Добавить запись</button>
+      <div class="form-btns">
+        <button class="btn-submit" id="addBtn">Добавить запись</button>
+        <button class="btn-cancel" id="cancelBtn">Отмена</button>
+      </div>
     </div>
   </div>
 
@@ -420,6 +431,7 @@ let viewDate = new Date();
 let selectedDate = null;
 let currentUser = localStorage.getItem('calUser') || 'A';
 let selectedCategory = 'work';
+let editingEventId = null; // ID редактируемой записи
 
 document.querySelectorAll('.cat-opt').forEach(opt => {
   opt.addEventListener('click', () => {
@@ -428,6 +440,14 @@ document.querySelectorAll('.cat-opt').forEach(opt => {
     selectedCategory = opt.dataset.cat;
   });
 });
+
+function setCategorySelect(catKey) {
+  selectedCategory = catKey || 'work';
+  document.querySelectorAll('.cat-opt').forEach(o => {
+    if(o.dataset.cat === selectedCategory) o.classList.add('active');
+    else o.classList.remove('active');
+  });
+}
 
 const whoSelect = document.getElementById('whoSelect');
 whoSelect.value = currentUser;
@@ -498,7 +518,6 @@ function renderCalendar(){
     const dots = document.createElement('div');
     dots.className = 'event-dots';
 
-    // В ЯЧЕЙКЕ ОТОБРАЖАЕТСЯ ТОЛЬКО ВРЕМЯ (или точка)
     dayEvents.slice(0, 2).forEach(ev => {
       const chip = document.createElement('div');
       chip.className = `time-chip author-${ev.author}`;
@@ -520,6 +539,7 @@ function renderCalendar(){
 
     div.addEventListener('click', () => {
       selectedDate = cell.date;
+      cancelEdit();
       renderCalendar();
       renderSidebar();
     });
@@ -555,6 +575,9 @@ function renderSidebar(){
 
       const catInfo = CATS[ev.category || 'work'];
 
+      // Безопасное экранирование спецсимволов для вызова JS
+      const safeEv = JSON.stringify(ev).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
       card.innerHTML = `
         <div class="event-meta">
           <span class="badge-cat" style="background:${catInfo.color}">${catInfo.label}</span>
@@ -567,7 +590,8 @@ function renderSidebar(){
             Добавил(а): <b>${ev.author === 'B' ? 'Ира' : 'Настя'}</b>
           </div>
           <div class="actions">
-            <button onclick="deleteEvent('${key}', '${ev.id}')">Удалить</button>
+            <button class="btn-edit" onclick="startEdit('${key}', '${ev.id}')">Редактировать</button>
+            <button class="btn-del" onclick="deleteEvent('${key}', '${ev.id}')">Удалить</button>
           </div>
         </div>
       `;
@@ -575,28 +599,75 @@ function renderSidebar(){
     });
   }
 
+  if(!editingEventId) {
+    resetForm();
+  }
+}
+
+function startEdit(key, id) {
+  const dayEvents = events[key] || [];
+  const ev = dayEvents.find(e => e.id === id);
+  if(!ev) return;
+
+  editingEventId = id;
+  document.getElementById('evTitle').value = ev.title || '';
+  document.getElementById('evTime').value = ev.time || '';
+  document.getElementById('evNote').value = ev.note || '';
+  setCategorySelect(ev.category || 'work');
+
+  document.getElementById('addBtn').textContent = 'Сохранить изменения';
+  document.getElementById('cancelBtn').style.display = 'block';
+  document.getElementById('evTitle').focus();
+}
+
+function cancelEdit() {
+  editingEventId = null;
+  resetForm();
+  document.getElementById('addBtn').textContent = 'Добавить запись';
+  document.getElementById('cancelBtn').style.display = 'none';
+}
+
+function resetForm() {
   document.getElementById('evTitle').value = '';
   document.getElementById('evTime').value = '';
   document.getElementById('evNote').value = '';
-  document.getElementById('addBtn').onclick = () => addEvent(key);
 }
 
-function addEvent(key){
+function saveEvent(key){
   const title = document.getElementById('evTitle').value.trim();
   if(!title){ alert('Заполните поле "Куда / Что запланировано"!'); return; }
 
-  db.ref('events/' + key).push({
+  const payload = {
     title: title,
     time: document.getElementById('evTime').value.trim(),
     note: document.getElementById('evNote').value.trim(),
     category: selectedCategory,
     author: currentUser
-  });
+  };
+
+  if (editingEventId) {
+    // Редактирование имеющейся записи
+    db.ref('events/' + key + '/' + editingEventId).update(payload)
+      .then(() => cancelEdit());
+  } else {
+    // Создание новой записи
+    db.ref('events/' + key).push(payload)
+      .then(() => resetForm());
+  }
 }
 
 function deleteEvent(key, id){
-  db.ref('events/' + key + '/' + id).remove();
+  if(confirm('Удалить эту запись?')) {
+    db.ref('events/' + key + '/' + id).remove();
+    if(editingEventId === id) cancelEdit();
+  }
 }
+
+document.getElementById('addBtn').onclick = () => {
+  if(selectedDate) saveEvent(dateKey(selectedDate));
+};
+
+document.getElementById('cancelBtn').onclick = () => cancelEdit();
 
 document.getElementById('prevBtn').addEventListener('click', () => {
   viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1);
